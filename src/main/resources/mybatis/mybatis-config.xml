@@ -7,14 +7,10 @@
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:8888/pj_co_dan_gian"/>
-                <property name="username" value="nguyen"/>
-                <property name="password" value="thaibinh"/>
             </dataSource>
         </environment>
     </environments>
     <mappers>
-        <mapper package="pj.hoangnv.repository.mapper"/>
+        <package name="pj.hoangnv.repository.mapper"/>
     </mappers>
 </configuration>

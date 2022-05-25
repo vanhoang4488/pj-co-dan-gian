@@ -16,9 +16,9 @@ public class RepositoryBuilder {
     public static SqlSessionFactory getInstance() throws IOException {
 
         if(sqlSessionFactory == null){
-            synchronized (sqlSessionFactory){
+            synchronized (RepositoryBuilder.class){
                 if(sqlSessionFactory == null) {
-                    String resource = "/mybatis/mybatis-config.xml";
+                    String resource = "mybatis/mybatis-config.xml";
                     InputStream inputStream = Resources.getResourceAsStream(resource);
                     sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
                 }

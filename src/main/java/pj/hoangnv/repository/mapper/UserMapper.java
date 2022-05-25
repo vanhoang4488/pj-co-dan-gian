@@ -5,9 +5,9 @@ import pj.hoangnv.repository.entity.UserDocument;
 
 public interface UserMapper {
 
-    @Select("db.users.findOne({username:#{username}})")
+    @Select("select * from users where username = #{username})")
     UserDocument findUserByUsername(String username);
 
-    @Select("db.users.findOne({gmail:#{gmail}})")
+    @Select("select * from users where gmail = #{gmail})")
     UserDocument findUserByGmail(String gmail);
 }
