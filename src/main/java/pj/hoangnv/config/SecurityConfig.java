@@ -26,13 +26,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated();
 
         http.authorizeRequests().and()
-                .csrf().ignoringAntMatchers("/**");
+                .csrf().disable();
 
         http.authorizeRequests()
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/j_spring_security_check")
-                .loginPage("/sys/user/login")
+                //.loginPage("/sys/user/login")
                 .defaultSuccessUrl("/home")
                 .failureForwardUrl("/sys/user/login")
                 .permitAll();

@@ -5,14 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6dca0a0-c97b-4536-a0fa-0d275bddd3bd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/service/CustomUserDetailsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/config/WebSecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/dao/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/dao/CustomUserDetailsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/RepositoryBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/RepositoryBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mybatis/mybatis-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mybatis/mybatis-config.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/controller/SysUserLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/controller/SysUserLoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/dao/CustomUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/AbstractRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/IRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/RepositoryBuilder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/entity/UserDocument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/entity/UserDocument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/entity/common/BaseDocument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pj/hoangnv/entity/model/BaseDocument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/impl/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/repository/mapper/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pj/hoangnv/service/SysUserLoginService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mybatis/mybatis-config.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,8 +29,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -89,7 +96,11 @@
       <workItem from="1653321533220" duration="1117000" />
       <workItem from="1653369011762" duration="7020000" />
       <workItem from="1653380040352" duration="7206000" />
-      <workItem from="1653460906445" duration="1502000" />
+      <workItem from="1653460906445" duration="3104000" />
+      <workItem from="1653467199609" duration="840000" />
+      <workItem from="1653667308361" duration="98000" />
+      <workItem from="1653670890305" duration="599000" />
+      <workItem from="1653730585384" duration="4018000" />
     </task>
     <servers />
   </component>

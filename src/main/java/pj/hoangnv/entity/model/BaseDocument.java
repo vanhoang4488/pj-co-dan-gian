@@ -1,4 +1,4 @@
-package pj.hoangnv.repository.entity.common;
+package pj.hoangnv.entity.model;
 
 import java.io.Serializable;
 
