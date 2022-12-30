@@ -1,17 +1,40 @@
 package mm.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
 @Configuration
-public class SecurityConfig {
+@RequiredArgsConstructor
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final BaseLdapPathContextSource contextSource;
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain (ServerHttpSecurity http) {
-        
-
-        return http.build();
+    public BindAuthenticator ldapAuthenticator () {
+        BindAuthenticator authenticator = new BindAuthenticator(contextSource);
+        authenticator.setUserSearch(new FilterBasedLdapUserSearch("ou=people", "uid={0}", contextSource));
+        return authenticator;
     }
+
+    @Bean
+    public LdapAuthenticationProvider ldapAuthenticationProvider() {
+        return new LdapAuthenticationProvider(ldapAuthenticator());
+    }
+
+    @Override
+    protected void configure (HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .formLogin();
+    }
+
 }
