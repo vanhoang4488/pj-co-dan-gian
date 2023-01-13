@@ -1,4 +1,4 @@
-package mm.config;
+package vanhoang.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -17,24 +19,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final BaseLdapPathContextSource contextSource;
 
     @Bean
-    public BindAuthenticator ldapAuthenticator () {
+    public BindAuthenticator bindAuthenticator () {
         BindAuthenticator authenticator = new BindAuthenticator(contextSource);
         authenticator.setUserSearch(new FilterBasedLdapUserSearch("ou=people", "uid={0}", contextSource));
         return authenticator;
     }
 
     @Bean
-    public LdapAuthenticationProvider ldapAuthenticationProvider() {
-        return new LdapAuthenticationProvider(ldapAuthenticator());
+    public LdapAuthenticationProvider ldapAuthenticationProvider () {
+        return new LdapAuthenticationProvider(bindAuthenticator());
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler () {
+        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
+        handler.setUseReferer(true);
+        handler.setDefaultTargetUrl("/auth/ldap/login");
+        return handler;
     }
 
     @Override
-    protected void configure (HttpSecurity http) throws Exception {
-
-        http.authorizeRequests()
-                .anyRequest().fullyAuthenticated()
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests().anyRequest().fullyAuthenticated()
                 .and()
-                .formLogin();
+                .formLogin()
+                .successHandler(successHandler())
+                .permitAll();
     }
-
 }
