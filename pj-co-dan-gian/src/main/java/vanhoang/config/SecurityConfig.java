@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,21 +28,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LdapAuthenticationProvider(bindAuthenticator());
     }
 
-    @Bean
-    public AuthenticationSuccessHandler successHandler () {
-        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
-        handler.setUseReferer(true);
-        handler.setDefaultTargetUrl("/auth/ldap/login");
-        return handler;
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests().anyRequest().fullyAuthenticated()
+                .authorizeRequests()
+                .antMatchers("/auth/register", "/").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .successHandler(successHandler())
                 .permitAll();
     }
 }
