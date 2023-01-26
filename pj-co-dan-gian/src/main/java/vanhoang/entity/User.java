@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 public class User {
 
     @MongoId(targetType = FieldType.OBJECT_ID)
-    private String userId;
+    private String id;
     private String loginName;
+    private String email;
 }

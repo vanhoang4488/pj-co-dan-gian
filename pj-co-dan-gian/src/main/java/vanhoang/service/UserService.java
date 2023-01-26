@@ -16,4 +16,12 @@ public class UserService {
         user.setLoginName(loginName);
         userRespository.insert(user);
     }
+
+    public User findUserByLoginName (String loginName) {
+        return userRespository.findUserByLoginName(loginName);
+    }
+
+    public User findUserByEmail (String email) {
+        return userRespository.findUserByEmail (email);
+    }
 }
