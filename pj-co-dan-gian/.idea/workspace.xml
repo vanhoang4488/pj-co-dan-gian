@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e6d8a341-a1b0-4ea6-934a-8d7ff1e86521" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vanhoang/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vanhoang/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vanhoang/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vanhoang/controller/AuthenticationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +102,11 @@
       <workItem from="1673521887613" duration="1318000" />
       <workItem from="1673952917822" duration="1229000" />
       <workItem from="1674007902412" duration="89000" />
+      <workItem from="1674785319798" duration="2670000" />
+      <workItem from="1674793495476" duration="79000" />
+      <workItem from="1674793582321" duration="158000" />
+      <workItem from="1675043905479" duration="481000" />
+      <workItem from="1675068215903" duration="8000" />
     </task>
     <servers />
   </component>

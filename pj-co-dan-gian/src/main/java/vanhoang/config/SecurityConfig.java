@@ -1,27 +1,44 @@
 package vanhoang.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
+import java.util.ArrayList;
+import java.util.List;
 
+@Slf4j
 @Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final BaseLdapPathContextSource contextSource;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public BindAuthenticator bindAuthenticator () {
@@ -35,39 +52,91 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LdapAuthenticationProvider(bindAuthenticator());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/auth/register", "/", "/auth/google/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .failureForwardUrl("/auth/error")
-                .permitAll()
-                .and()
-                .oauth2Login(Customizer.withDefaults());
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager () {
+        OAuth2AuthorizedClientProvider authorizedClientProvider =
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .authorizationCode()
+                        .refreshToken()
+                        .clientCredentials()
+                        .password()
+                        .build();
+
+        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
+                new DefaultOAuth2AuthorizedClientManager(this.clientRegistrationRepository, this.authorizedClientRepository());
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+
+        return authorizedClientManager;
     }
 
     @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
+    public OAuth2AuthorizedClientService authorizedClientService () {
+        return new InMemoryOAuth2AuthorizedClientService(this.clientRegistrationRepository);
     }
 
-    private ClientRegistration googleClientRegistration() {
-        return ClientRegistration.withRegistrationId("google")
-                .clientId("127704625208-0pj17vgq8ug6l2su0psj1v6poq8c2nl8.apps.googleusercontent.com")
-                .clientSecret("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")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
-                .scope("email", "openid", "profile")
-                .tokenUri("https://www.googleapis.com/oauth2/v4/token")
-                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-                .redirectUri("{baseUrl}/auth/{registrationId}/login")
-                .userNameAttributeName(IdTokenClaimNames.SUB)
-                .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
-                .clientName("Google")
-                .build();
+    @Bean
+    public OAuth2AuthorizedClientRepository authorizedClientRepository () {
+        return new AuthenticatedPrincipalOAuth2AuthorizedClientRepository(this.authorizedClientService());
+    }
+
+    @Bean
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/", "/auth/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login(oauth2 -> oauth2
+                        .clientRegistrationRepository(this.clientRegistrationRepository)
+                        .authorizedClientService(this.authorizedClientService())
+                        .authorizedClientRepository(this.authorizedClientRepository())
+                        .userInfoEndpoint(userInfo -> userInfo
+                            .userService(this.userService())
+                            .oidcUserService(this.oidcUserService()))
+                        .failureUrl("/auth/error")
+                )
+                .oauth2Client(client -> client
+                        .clientRegistrationRepository(this.clientRegistrationRepository)
+                        .authorizedClientService(this.authorizedClientService())
+                        .authorizedClientRepository(this.authorizedClientRepository()))
+                .formLogin()
+                .failureForwardUrl("/auth/error")
+                .permitAll();
+
+        return http.build();
+    }
+
+    public RestOperations restOperations () {
+        RestTemplate restTemplate = new RestTemplate();
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+        interceptors.add(this.clientHttpRequestInterceptor());
+        restTemplate.setInterceptors(interceptors);
+        return  restTemplate;
+    }
+
+    public ClientHttpRequestInterceptor clientHttpRequestInterceptor () {
+        return (request, body, execution) -> {
+            log.info("-------> interceptor success");
+            return execution.execute(request, body);
+        };
+    }
+
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> userService () {
+        DefaultOAuth2UserService userService = new DefaultOAuth2UserService();
+        userService.setRequestEntityConverter(new Converter<OAuth2UserRequest, RequestEntity<?>>() {
+            @Override
+            public RequestEntity<?> convert(OAuth2UserRequest source) {
+                log.info("----------------> pre handler");
+                return null;
+            }
+        });
+        userService.setRestOperations(this.restOperations());
+        return userService;
+    }
+
+    public OidcUserService oidcUserService () {
+        OidcUserService oidcUserService = new OidcUserService();
+        oidcUserService.setOauth2UserService(this.userService());
+        return  oidcUserService;
     }
 }
