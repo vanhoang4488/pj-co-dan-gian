@@ -2,26 +2,26 @@ package vanhoang.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import vanhoang.entity.User;
-import vanhoang.repository.mongodb.UserRespository;
+import vanhoang.entity.UserEntity;
+import vanhoang.repository.mongodb.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRespository userRespository;
+    private final UserRepository userRepository;
 
     public void addUser (String loginName) {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setLoginName(loginName);
-        userRespository.insert(user);
+        userRepository.insert(user);
     }
 
-    public User findUserByLoginName (String loginName) {
-        return userRespository.findUserByLoginName(loginName);
+    public UserEntity findUserByLoginName (String loginName) {
+        return userRepository.findUserByLoginName(loginName);
     }
 
-    public User findUserByEmail (String email) {
-        return userRespository.findUserByEmail (email);
+    public UserEntity findUserByEmail (String email) {
+        return userRepository.findUserByEmail (email);
     }
 }

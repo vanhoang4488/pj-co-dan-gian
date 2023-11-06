@@ -1,14 +1,14 @@
 package vanhoang.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vanhoang.dto.base.ResultResponse;
 
 @RestController
 public class HomeController {
 
     @GetMapping("/")
-    public ResponseEntity<String> home () {
-        return ResponseEntity.ok("day la trang chu");
+    public ResultResponse<String> home () {
+        return ResultResponse.success("day la trang chu");
     }
 }
